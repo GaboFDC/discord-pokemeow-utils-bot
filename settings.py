@@ -1,9 +1,11 @@
 # settings.py
 import os
 import logging
-from dotenv import load_dotenv
 
-load_dotenv()
+if os.getenv("PY_ENV") == "DEV":
+    from dotenv import load_dotenv
+
+    load_dotenv()
 
 logger = logging.getLogger("discord")
 
