@@ -55,7 +55,7 @@ def load_config(guild):
 @client.event
 async def on_ready():
     await client.change_presence(activity=discord.Game(name="PokéMeow"))
-    print("We have logged in as {0.user}".format(client))
+    settings.logging.info("We have logged in as {0.user}".format(client))
 
 
 set_notify_channel_command = "/utils set notify channel"
@@ -83,18 +83,27 @@ async def on_message(message):
     if message.author == client.user:
         return
 
+    settings.logging.info("Got message")
     if message.content == set_notify_channel_command:
+        settings.logging.info("Got set_notify_channel_command")
         # load guild conf only when needed
         conf = load_config(message.guild)
         conf_set(conf, "notify_channel", message.channel.name)
+        message.channel.send(
+            "Successfully changed notify channel to: {}".format(message.channel.name)
+        )
 
     if message.author.name == "PokéMeow":
+        settings.logging.info("Got PokéMeow message")
         try:
             data = message.embeds[0].to_dict()
+            settings.logging.info("Got embeds message")
             try:
                 fishing_state = data["author"]["name"]
+                settings.logging.info("Got author.name message")
                 fishing_messages = ["cast out", "into the water"]
                 if all(x in data["description"] for x in fishing_messages):
+                    settings.logging.info("Got fishing_messages message")
                     # load guild conf only when needed
                     conf = load_config(message.guild)
                     prev_fishing_state = conf_get(conf, "fishing_state")
